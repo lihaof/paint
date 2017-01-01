@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>首页</title>
+  <script src="js/jquery.js"></script>
+  <script src="js/drag.js"></script>
+  <link rel="stylesheet" href="css/canvas.css" type="text/css">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/socket.io.js"></script>
+  <!--<script src="js/barrage.js"></script>-->
+  <script src="js/chat.js"></script>
+  <script src="js/vue.js"></script>
+
+    <style type="text/css">
+        #box { background:url('img/clear.png') no-repeat;background-size: contain;width: 200px; height: 100px; z-index:100; cursor: move; position: absolute; top: 30px; left: 30px; background-color: transparent ; border: 1px solid #CCCCCC;box-shadow: 10px 10px 25px #ccc;}
+        #coor { width: 10px; height: 10px; overflow: hidden; cursor: se-resize; position: absolute; right: 0; bottom: 0; background-color: #09C; }
+    </style>
+</head>
+<body>
+
+<!--<div id="barrager" style="width: 100%;height: 100px;background: #ddd"></div>-->
+
+<!--<div id="box">-->
+    <!--<div id="coor"></div>-->
+<!--</div>-->
+  <div class="paintBox">
+      <div class="btn-box">
+          <div class="btn-bg" id="btn"><img class="btn-img" src="img/pen_hold.png" alt=""><span class="tips">我来画</span></div>
+          <br class="br">
+          <div class="btn-bg" id="clear"><img class="btn-img" src="img/clear.png" alt=""><span class="tips">清空画布</span></div>
+      </div>
+      <div class="pens" id="pens">
+          <!--画笔-->
+          <img class="pen" v-for="pen in pens" :id='pen.id' :src='pen.pic' v-on:click="changeColor" >
+      </div>
+      <!--画布-->
+      <canvas class="canvas" id="myCanvasTemp" style="z-index: 5;background-color: transparent;"></canvas>
+      <canvas class="canvas" id="myCanvas"></canvas>
+      <!--弹幕区-->
+      <!--<div id="barrage" style="width:100%;height:500px;margin:0 auto;position: relative;top: 0;left: 0;z-index: 4;"></div>-->
+  </div>
+
+
+  <div class="wrapper">
+      <div class="banner">
+          <span id="status">0个用户 在线</span>
+      </div>
+
+      <div id="historyMsg"></div>
+
+      <div class="controls" >
+          <textarea id="messageInput" placeHolder="说句话吧 ε٩(๑> ₃ <)۶з"></textarea>
+          <!--<input id="sendBtn" type="button" value="发送">-->
+          <div id="sendBtn"><img class="btn-enter" src="img/enter.png" alt=""></div>
+      </div>
+  </div>
+
+  <div id="loginWrapper">
+      <p id="info">connecting to server...</p>
+      <div id="nickWrapper">
+          <input type="text" placeHolder="输入昵称" id="nicknameInput" />
+          <button id="loginBtn">确认</button>
+      </div>
+  </div>
+
+  <div class="tips-bottom">Tips: 点击左侧画笔按钮才能开始画  ㄟ(￣▽￣ㄟ)</div>
+
+    <!--选择文件-->
+    <input id="inp" type='file'>
+    <p id="b64"></p>
+    <img id="img" height="150">
+
+  <script>
+    $(document).ready(function () {
+        var canvas = $('.canvas');
+        var paintBox = $('.paintBox');
+        var btnBox = $('.btn-box');
+        var bodyWidth = $('body').width();
+        var paintBoxMarginLeft = 1;
+        var messageBox = $('#historyMsg');
+        var wrapper = $('.wrapper');
+        var controls = $('.controls');
+        var tips = $('.tips-bottom');
+
+        canvas.attr({width:paintBox.width(),height:paintBox.width()*(4/7)});
+
+
+        if(bodyWidth <= 768){
+            paintBoxMarginLeft = (bodyWidth - paintBox.width())/2;
+            $('.btn-box').css('top',canvas.height() + $('.pens').height() + 10);
+
+        }
+        else{
+            paintBoxMarginLeft = (bodyWidth  - paintBox.width() -  $('.wrapper').width())/2;
+//            $('.btn-box').css('left',paintBoxMarginLeft - 150);
+            paintBox.css('marginLeft',paintBoxMarginLeft);
+
+            wrapper.height(paintBox.width()*(4/7));
+            messageBox.height(wrapper.height()*0.7);
+            controls.height(wrapper.height()*0.19);
+            tips.css('top',canvas.height() + 100);
+            tips.css('left',btnBox.width());
+        }
+    });
+
+</script>
+<script>
+    var c = document.getElementById("myCanvas");
+    var c_temp = document.getElementById("myCanvasTemp");
+
+    var temp = 0;
+    var ctx1 = c.getContext("2d");
+    var ctx_temp = c_temp.getContext("2d");
+    var socket = io.connect(window.location.hostname + ':4000');
+    var btnDown = 0;//1表示绘画模式,0表示观看模式
+
+    var pens = new Vue({
+        el: '#pens',
+        data: {
+            pens: [
+                { pic: 'img/pen_black.png', id: 'black'},
+                { pic: 'img/pen_red.png', id: 'red'},
+                { pic: 'img/pen_blue.png', id: 'blue'},
+                { pic: 'img/pen_green.png', id: 'green'},
+                { pic: 'img/pen_yellow.png', id: 'yellow'},
+                { pic: 'img/pen_purple.png', id: 'purple'}
+            ]
+        },
+        methods: {
+            changeColor: function (event) {//event为当前的dom事件
+                    const color = {
+                        "red": '#ff4e44',
+                        "blue": '#3e6dff',
+                        "green": '#5fff46',
+                        "black": '#000',
+                        "yellow": '#f1f745',
+                        "purple": '#b535ff'
+                    }
+                    ctx_temp.strokeStyle = color[event.target.id];
+                    ctx1.strokeStyle = color[event.target.id];
+                    socket.emit('penColor',color[event.target.id]);
+            },
+        }
+
+    })
+</script>
+  <script src="js/paint.js"></script>
+  <script src="js/getPoint.js"></script>
+  <script src="js/pushImg.js"></script>
+</body>
+</html>

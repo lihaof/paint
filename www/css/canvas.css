@@ -1,0 +1,239 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    background-color: #f1f1f1;
+}
+
+textarea {
+    resize: none;
+}
+
+.paintBox{
+    width: calc(70% - 50px);
+    float: left;
+    max-width: 1200px;
+}
+
+.canvas{
+    box-shadow: 0 0 7px #bcbcbc;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    z-index: 3;
+    background-color: #fff;
+    display: block;
+    position: absolute;
+    user-select: none;
+    -webkit-tap-highlight-color:transparent;
+}
+
+.pens{
+    width: 100%;
+    height: 70px;
+    text-align: center;
+    z-index: -1;
+}
+
+.pen{
+    height: 100%;
+    position: relative;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.pen:hover{
+    animation: penUp 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes penUp
+{
+    0%   {top:0;}
+    100% {top:-10px;}
+}
+
+.btn-box{
+    position: absolute;
+    top: 70px;
+    left: 0;
+    user-select: none;
+}
+
+.btn-bg{
+    width: 150px;
+    height: 50px;
+    padding: 0 5px;
+    background-color: #fff;
+    margin-top: 3px;
+    margin-left: 0px;
+    cursor: pointer;
+    float: left;
+    line-height: 50px;
+}
+
+.btn-bg:hover{
+    background-color: #eeeeee;
+}
+
+.btn-img{
+    display: block;
+    width: 40px;
+    height: 40px;
+    float: left;
+    margin-right: 2px;
+    margin-top: 5px;
+}
+
+.tips{
+    color: #999;
+    float: left;
+    margin-left: 2px;
+    font-size: 13px;
+}
+
+.box-qa{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    background-color: #c6d9d5;
+    padding: 0 20px;
+    font-size: 18px;
+    color: #383838;
+    float: left;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.box-answer{
+   float: right;
+}
+
+.tips-bottom{
+    color: #333;
+    position: absolute;
+    left: 480px;
+    top: 800px;
+    width: 350px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 1px 1px 3px #ddd;
+}
+
+
+
+@media screen and (max-width: 768px) {
+    .paintBox{
+        width: 100%;
+        float: none;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    #myCanvas{
+        box-shadow: none;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        z-index: 0;
+        background-color: #fff;
+        display: block;
+        position: relative;
+    }
+
+    .pens{
+        width: 100%;
+        height: 40px;
+        text-align: center;
+        z-index: -1;
+    }
+
+    .pen{
+        width: 40px;
+        height: 40px;
+        position: relative;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .pen:hover{
+        animation: penUp 0.3s;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes penUp
+    {
+        0%   {top:0;}
+        100% {top:-10px;}
+    }
+
+    .btn-box{
+        width: 100%;
+        position: absolute;
+        top: 70px;
+        left: 0;
+    }
+
+    .btn-bg{
+        width: calc(100%/2);
+        height: 50px;
+        padding: 0;
+        line-height: 50px;
+        background-color: #fff;
+        margin-top: 3px;
+        cursor: pointer;
+        float: left;
+        text-align: center;
+        box-sizing: border-box;
+        border-left: 0.05rem solid #ddd;
+        border-right: 0.05rem solid #ddd;
+    }
+
+    .btn-bg:hover{
+        background-color: #eeeeee;
+    }
+
+    .btn-img{
+        display: block;
+        width: 40px;
+        height: 40px;
+        margin-left: 40px;
+        float: left;
+        margin-top: 5px;
+    }
+
+    .tips{
+        color: #999;
+        float: left;
+        margin-left: 2px;
+        font-size: 13px;
+    }
+
+    .box-qa{
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        background-color: #c6d9d5;
+        padding: 0 20px;
+        font-size: 18px;
+        color: #383838;
+        float: left;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
+    .box-answer{
+        float: right;
+    }
+
+    .tips-bottom{
+        display: none;
+    }
+
+    .br{
+        display: none;
+    }
+
+}
